@@ -40,42 +40,56 @@ wap_test_framework/
 │   └── test_twitch_wap.py # Test case implementation
 ├── utils/
 │   └── helpers.py         # Helper utilities
-├── screenshots/           # Screenshots saved here
+├── screenshots/           # Screenshots saved here (auto-created)
 ├── requirements.txt       # Dependencies
 ├── pytest.ini             # Pytest configuration
 └── README.md              # Documentation
 ```
 
 ---
-
-## 🛠️ Installation
+### 🛠️ Local Test Execution Guide
+1. **Create a virtual environment**
 ```bash
-# Clone repo
- git clone <your_repo_url>
- cd wap_test_framework
-
-# Install dependencies
- pip install -r requirements.txt
+python -m venv venv
 ```
-
----
-
-## ▶️ Running Tests
+2. **Activate the virtual environment**
+- Windows:
 ```bash
-pytest -q
+venv\Scripts\activate
 ```
-
-Run headless (e.g., CI/CD):
+- macOS / Linux:
 ```bash
-HEADLESS=1 pytest -q
+source venv/bin/activate
 ```
+3. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+4. **Verify pytest is available**
+```bash
+pytest --version
+```
+5. **Run tests**
+```bash
+pytest -q tests/
+```
+Or simply run `pytest -q` in the project root, the framework will automatically discover test files in the `tests/` directory that match `test_*.py`.
 
 Screenshots will be saved to the `screenshots/` directory.
 
+
+6. **(Optional) Run in headless mode**
+```bash
+set HEADLESS=1 # Windows
+export HEADLESS=1 # macOS / Linux
+pytest tests/
+```
+
+
 ---
 
-## 🚀 Test Scenario
-The included test case (`test_twitch_wap.py`) covers:
+## ▶️ Demo Test Scenario
+The demo test case (`test_twitch_wap.py`) covers:
 1. Navigate to [https://m.twitch.tv/](https://m.twitch.tv/)
 2. Click on the **search** icon
 3. Scroll down twice
@@ -86,10 +100,9 @@ The included test case (`test_twitch_wap.py`) covers:
 
 ---
 
-## 📌 Notes
+## 📌 Special Design
 - Extend `COMMON_MODAL_CLOSE_SELECTORS` in `utils/helpers.py` for handling new popups.
 - Use `pages/` folder to add new Page Objects for better scalability.
-- Designed for local use and CI pipelines.
 
 ---
 
