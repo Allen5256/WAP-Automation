@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env
+venv/
+ENV/
+env/
+*.egg-info/
+dist/
+build/
+
+# VS Code
+.vscode/
+
+# Selenium screenshots
+screenshots/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Webdriver-manager cache
+.wdm/
