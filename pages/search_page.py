@@ -1,4 +1,3 @@
-import time
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from .base_page import BasePage
@@ -10,12 +9,6 @@ class SearchPage(BasePage):
         By.CSS_SELECTOR,
         "a[data-a-target='preview-card-image-link'], a[href*='/videos/'], a[href*='/channel/']",
     )
-
-    def scroll_down(self, times: int = 2, pause: float = 1.0):
-        for _ in range(times):
-            self.driver.execute_script("window.scrollBy(0, window.innerHeight || 800);")
-            time.sleep(pause)
-            close_known_modals(self.driver)
 
     def list_streamers(self):
         try:
