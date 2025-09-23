@@ -35,7 +35,7 @@ class BasePage:
         except TimeoutException:
             raise AssertionError(f"Element {locator} not clickable")
 
-    def scroll_down(self, times=2, pause=1.0):
+    def scroll_down(self, times=1, pause=1.0):
         for _ in range(times):
             self.driver.execute_script("window.scrollBy(0, window.innerHeight || 800);")
             time.sleep(pause)
