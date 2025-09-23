@@ -1,3 +1,4 @@
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import (
@@ -15,6 +16,10 @@ class HomePage(BasePage):
         By.CSS_SELECTOR,
         "button[data-a-target='search-button'], button[aria-label='Search']",
     )
+    SEARCH_INPUT = (
+        By.CSS_SELECTOR,
+        'input[type="search"]',
+    )
 
     def go(self):
         self.driver.get(BASE_URL)
@@ -22,8 +27,7 @@ class HomePage(BasePage):
     def click_search(self):
         try:
             el = self.wait_for_element(
-                self.SEARCH_ICON, 
-                condition=EC.element_to_be_clickable
+                self.SEARCH_ICON, condition=EC.element_to_be_clickable
             )
             try:
                 el.click()
@@ -31,3 +35,8 @@ class HomePage(BasePage):
                 self.driver.execute_script("arguments[0].click();", el)
         except TimeoutException:
             raise AssertionError("Search icon not found on home page")
+
+    def search(self, keyword):
+        search_input = self.wait_for_element(self.SEARCH_INPUT)
+        search_input.send_keys(keyword)
+        search_input.send_keys(Keys.RETURN)
