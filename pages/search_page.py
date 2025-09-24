@@ -1,7 +1,8 @@
-from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+
 from .base_page import BasePage
-from utils.helpers import close_known_modals
 
 
 class SearchPage(BasePage):
@@ -14,7 +15,7 @@ class SearchPage(BasePage):
         try:
             self.wait_for_element(
                 self.STREAMER_LINKS,
-                condition=lambda loc: len(self.driver.find_elements(*loc)) > 0,
+                condition=EC.presence_of_all_elements_located,
             )
         except TimeoutException:
             return []
@@ -26,8 +27,7 @@ class SearchPage(BasePage):
         if not elems:
             raise AssertionError("No streamers found on search/list page")
         target = elems[index]
-        href = target.get_attribute("href")
-        if href:
+        if href := target.get_attribute("href"):
             self.driver.get(href)
         else:
             # fallback using click_element

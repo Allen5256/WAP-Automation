@@ -1,7 +1,9 @@
 import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
 from utils.helpers import close_known_modals
 
 DEFAULT_TIMEOUT = 15
@@ -13,10 +15,9 @@ class BasePage:
         self.wait = WebDriverWait(self.driver, DEFAULT_TIMEOUT)
 
     def wait_for_element(
-        self, 
-        locator, 
-        condition=EC.presence_of_element_located,
-        timeout=DEFAULT_TIMEOUT,
+        self,
+        locator,
+        condition=EC.presence_of_element_located
     ):
         return self.wait.until(condition(locator))
 
@@ -27,7 +28,7 @@ class BasePage:
         timeout=DEFAULT_TIMEOUT,
     ):
         try:
-            el = self.wait_for_element(locator, condition=condition, timeout=timeout)
+            el = self.wait_for_element(locator, condition=condition)
             try:
                 el.click()
             except Exception:

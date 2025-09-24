@@ -1,13 +1,14 @@
 import time
+
 from pages import initialize_pages
 from utils.helpers import close_known_modals, take_timestamped_screenshot
 
 
 class TestTwitchWAP:
-    def test_twitch_select_streamer_and_screenshot(driver):
+    def test_twitch_select_streamer_and_screenshot(self, driver):
 
         initialize_pages(driver)
-        
+
         # Navigate to home page
         home = driver.home_page
         home.go()
@@ -29,7 +30,7 @@ class TestTwitchWAP:
 
         # On the streamer page, wait until loaded and handle the popups or modals
         streamer = driver.streamer_page
-        streamer.wait_until_loaded(timeout=25)
+        streamer.wait_until_loaded()
         close_known_modals(driver)
 
         # Take a timestamped screenshot of the streamer page
