@@ -4,8 +4,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from pages import initialize_pages
 
 MOBILE_DEVICE_NAME = "Pixel 2"
+
 
 @pytest.fixture(scope="function")
 def driver():
@@ -21,8 +23,25 @@ def driver():
         chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--window-size=412,915")
 
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
     driver = webdriver.Chrome(service=service, options=chrome_options)
     driver.implicitly_wait(2)
     yield driver
     driver.quit()
+
+
+@pytest.fixture
+def home_page(driver):
+    initialize_pages(driver)
+    return driver.home_page
+
+
+@pytest.fixture
+def search_page(driver):
+    initialize_pages(driver)
+    return driver.search_page
+
+
+@pytest.fixture
+def streamer_page(driver):
+    initialize_pages(driver)
+    return driver.streamer_page

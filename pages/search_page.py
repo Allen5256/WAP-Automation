@@ -6,10 +6,24 @@ from .base_page import BasePage
 
 
 class SearchPage(BasePage):
+    CHANNELS_VIEW_ALL = (
+        By.CSS_SELECTOR,
+        'p[aria-label="View All Channel Search Results"]',
+    )
     STREAMER_LINKS = (
         By.CSS_SELECTOR,
         "a[data-a-target='preview-card-image-link'], a[href*='/videos/'], a[href*='/channel/']",
     )
+
+    def view_all_channels(self):
+        try:
+            self.click_element(
+                self.CHANNELS_VIEW_ALL,
+                condition=EC.element_to_be_clickable,
+            )
+        except TimeoutException:
+            raise AssertionError("View All Channels link not found on search page")
+
 
     def list_streamers(self):
         try:

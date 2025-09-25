@@ -1,3 +1,9 @@
-selenium
-pytest
-webdriver-manager
+# Core dependencies
+selenium>=4.10.0,<5.0.0          # Web automation library, stable v4 branch
+pytest>=7.3.0,<8.0.0             # Test runner, stable v7 branch
+allure-pytest>=2.13.2,<3.0.0     # Allure integration with pytest
+webdriver-manager>=4.0.0,<5.0.0  # Auto-download ChromeDriver/GeckoDriver
+
+# Optional but recommended
+pytest-xdist>=3.3.1,<4.0.0       # Parallel test execution
+pytest-html>=3.2.0,<4.0.0        # Alternative HTML reports for quick local debugging

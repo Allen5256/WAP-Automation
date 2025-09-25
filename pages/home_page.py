@@ -11,7 +11,7 @@ BASE_URL = 'https://m.twitch.tv/'
 
 class HomePage(BasePage):
     # Page locators
-    SEARCH_ICON = (
+    BROWSE_ICON = (
         By.CSS_SELECTOR,
         'a[href="/directory"]',
     )
@@ -23,19 +23,20 @@ class HomePage(BasePage):
     def go(self):
         self.driver.get(BASE_URL)
 
-    def click_search(self):
+    def click_browse(self):
         try:
             el = self.wait_for_element(
-                self.SEARCH_ICON, condition=EC.element_to_be_clickable
+                self.BROWSE_ICON, condition=EC.element_to_be_clickable
             )
             try:
                 el.click()
             except ElementClickInterceptedException:
                 self.driver.execute_script('arguments[0].click();', el)
         except TimeoutException:
-            raise AssertionError('Search icon not found on home page')
+            raise AssertionError('Browse icon not found on home page')
 
     def search(self, keyword):
+        self.click_browse()
         search_input = self.wait_for_element(self.SEARCH_INPUT)
         search_input.send_keys(keyword)
         search_input.send_keys(Keys.RETURN)

@@ -1,39 +1,37 @@
 import time
+import allure
 
-from pages import initialize_pages
 from utils.helpers import close_known_modals, take_timestamped_screenshot
 
 
 class TestTwitchWAP:
-    def test_twitch_select_streamer_and_screenshot(self, driver):
+    @allure.title("Twitch WAP: Verify search and Screenshot Streamer Page")
+    @allure.description("End-to-end test navigating Twitch mobile site, searching for a streamer, and taking a screenshot.")
+    def test_twitch_select_streamer_and_screenshot(self, driver, home_page, search_page, streamer_page):
 
-        initialize_pages(driver)
+        with allure.step("Navigate to Twitch mobile homepage"):
+            home_page.go()
+            time.sleep(1)
+            close_known_modals(driver)
 
-        # Navigate to home page
-        home = driver.home_page
-        home.go()
-        time.sleep(1)
-        close_known_modals(driver)
+        with allure.step("Search for 'starCraft II'"):
+            home_page.search("starCraft II")
 
-        # Click the search icon and search for a keyword
-        home.click_search()
-        home.search("starCraft II")
+        with allure.step("View all streamer/channel search results"):
+            search_page.view_all_channels()
 
-        # On the search page, scroll and list streamers
-        search = driver.search_page
-        search.scroll_down(times=2, pause=1.0)
-        elems = search.list_streamers()
-        assert elems, "No streamers found after scrolling"
+        with allure.step("Scroll through search results"):
+            search_page.scroll_down(times=2, pause=1.0)
+            assert search_page.list_streamers(), "No streamers found after scrolling"
 
-        # Select the first streamer from the list
-        search.select_streamer_by_index(0)
+        with allure.step("Select the first streamer from the list"):
+            search_page.select_streamer_by_index(0)
+        
+        with allure.step("Wait for the streamer page to load and handle any popups/modals"):
+            streamer_page.wait_until_loaded()
+            close_known_modals(driver)
 
-        # On the streamer page, wait until loaded and handle the popups or modals
-        streamer = driver.streamer_page
-        streamer.wait_until_loaded()
-        close_known_modals(driver)
-
-        # Take a timestamped screenshot of the streamer page
-        path = take_timestamped_screenshot(driver, name_prefix="twitch_streamer")
-        assert path.exists()
-        print(f"Saved screenshot to: {path}")
+        with allure.step("Take a timestamped screenshot of the streamer page"):
+            path = take_timestamped_screenshot(driver, name_prefix="twitch_streamer")
+            assert path.exists()
+            print(f"Saved screenshot to: {path}")
