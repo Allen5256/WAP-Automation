@@ -4,11 +4,19 @@ This repository provides a **scalable and maintainable test automation framework
 
 ## 🎥 Demo
 
-Here is a GIF showing the test running locally:
+#### Here is a GIF showing the test running locally:
 
-![Demo Run](docs/demo.gif)
+![Demo Run](./docs/demo_run.gif)
 
-_(Place your recorded GIF at `docs/demo.gif`. You can create one using tools like [asciinema](https://asciinema.org/), [screen-to-gif](https://www.screentogif.com/), or OBS.)_
+---
+
+## 📌 Design Principles
+
+- **Separation of Concerns:** Tests focus on validations, while Page Objects encapsulate actions and locators. This keeps the code clean and maintainable.
+- **Reusability & Scalability:** Common logic is centralized (e.g., waits, clicks), making it easy to extend the framework for new tests or platforms.
+- **Stability with Explicit Waits:** Prioritize `WebDriverWait` with expected conditions over fixed sleeps, ensuring more reliable and faster executions.
+- **Configurable Environment:** Driver setup is managed through pytest fixtures, supporting both headless and non-headless modes, and enabling quick environment setup.
+- **Transparency on Failures:** Automatic screenshots and optional Allure integration make debugging easier and test results more insightful.
 
 ---
 
@@ -51,95 +59,135 @@ wap_test_framework/
 
 ---
 
-## 🛠️ Prepare for Testing
+## 🛠️ Local Environment Preparation
 
-#### **System prerequisites**
+### **System prerequisites**
 - Python 3.8+
 - Google Chrome
 
-#### **Environment setup**
+---
 
-1. **Create a virtual environment**
+### Preparation steps
 
+**1. Clone & enter the project**
 ```bash
-python -m venv venv
-```
-
-2. **Activate the virtual environment**
-
-- Windows:
-
-```bash
-venv\Scripts\activate        # bash
-
-or
-
-.venv\Scripts\Activate.ps1   # powershell
-```
-
-- macOS / Linux:
-
-```bash
-source venv/bin/activate
-```
-
-3. **Install dependencies**
-
-```bash
-pip install -r requirements.txt
-```
-
-4. **Verify pytest is available**
-
-```bash
-pytest --version
-```
-
-5. **Run tests**
-
-   Simply run `pytest` in the project root for running all reconized tests.
-
-   Note that the framework will automatically discover test files in the tests/ directory that match test\_\*.py.
-
-   You can also specify the test set by using `-k` to pass the test set as the parameter. For example:
-
-```bash
-# module level
-pytest -k test_twitch_wap.py
-
-# class level
-pytest -k TestTwitchWap
-
-# method level
-pytest -k test_twitch_select_streamer_and_screenshot
-```
-
-#### **Optional: Allure**
-
-   This project uses **Allure** for test reporting. To generate and view reports, you need to have **Allure CLI** installed on your system as one of the the prerequisites.
-   Please refer to the official Allure documentation to install it for your operating system: https://docs.qameta.io/allure/
-
-   Note that Installing Allure CLI is **optional**. It is just for generating test reports in a more visual and easy-to-analyze format. If you only want to run the tests for development purposes, having `pytest` installed is sufficient.
-
-  Please follow the steps below to set up Allure (Only take Windows for example here).
-  
-  1. **Install Allure CLI**
-  ```powershell
-  
-  ```
-
-
-6. **(Optional) Run in headless mode**
-
-```bash
-set HEADLESS=1 # Windows
-export HEADLESS=1 # macOS / Linux
-pytest tests/
+git clone https://github.com/Allen5256/WAP-Automation.git
+cd WAP-Automation
 ```
 
 ---
 
-## ▶️ Demo Test Scenario
+
+**2. Download Reporting Tools (JDK + Allure)**
+
+To ensure consistency, please download the **portable (archive) versions** of JDK and Allure according to your operating system.
+After downloading, extract them into:
+
+```
+project-root/tools/jdk
+project-root/tools/allure
+```
+
+#### ☕ JDK 11 (LTS) – Portable (Archive)
+- 🔗 [Adoptium Temurin 11 Releases](https://adoptium.net/temurin/releases/?version=11)
+- Download the **Archive (.zip or .tar.gz)** version for your platform:
+  - **Windows** → `OpenJDK11U-jdk_x64_windows_hotspot_<version>.zip`
+  - **Linux** → `OpenJDK11U-jdk_x64_linux_hotspot_<version>.tar.gz`
+  - **macOS (Intel/Apple Silicon)** → `OpenJDK11U-jdk_x64_mac_hotspot_<version>.tar.gz` or `aarch64` for ARM
+
+#### 📊 Allure CLI – Portable
+- 🔗 [Allure CLI GitHub Releases](https://github.com/allure-framework/allure2/releases)
+  - Download the latest `allure-<version>.zip` (Windows)
+
+    or
+
+    `allure-<version>.tgz` (Linux/macOS).
+
+---
+
+**3. Configure Python Virtual Environment**
+
+Once the tools are placed in `/tools`, run the provided setup scripts to add them into PATH temporarily for your current session.
+
+#### macOS/Linux
+```bash
+chmod +x setup_env.sh
+./setup_env.sh
+```
+
+#### Windows (PowerShell)
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\setup_env.ps1
+```
+
+👉 These scripts will:
+- Create and activate a Python virtual environment.
+- Install required Python modules.
+- Add `/tools/jdk/bin` and `/tools/allure/bin` to PATH (session only).
+- Print the detected Java and Allure versions.
+
+---
+
+**4. Verify Installation**
+
+Activate your Python virtual environment again and check:
+
+#### macOS/Linux
+```bash
+source venv/bin/activate
+java -version
+allure --version
+```
+
+#### Windows (PowerShell)
+```powershell
+.venv\Scripts\Activate.ps1
+java -version
+allure --version
+```
+
+✅ Both commands should print version numbers, meaning the environment is ready.
+
+#### ⚠️ Notes
+- Do **not** install system-level JDK/Allure unless you prefer managing them manually.
+- The `/tools` folder ensures the same JDK and Allure versions are used across all platforms.
+- PATH modifications in setup scripts are **temporary for the current shell session** (avoiding system pollution).
+
+---
+
+## ▶️ Run Tests
+
+The test execution script files `run_test.sh` and `run_test.ps1` have already integrated `pytest` + `allure` commands to run the tests. Simply run them in the project root.
+
+#### macOS/Linux
+```bash
+./run_test.sh
+```
+
+#### Windows (PowerShell)
+```powershell
+.\run_test.ps1
+```
+
+Note that the framework will automatically discover test files in the tests/ directory that match `test\_\*.py`.
+
+You can also specify the test set by adding test set name in the command to pass it as the parameter. For example:
+
+```bash
+# module level
+./run_test.sh test_twitch_wap.py
+
+# class level
+./run_test.sh TestTwitchWap
+
+# method level
+./run_test.sh test_twitch_select_streamer_and_screenshot
+```
+
+---
+
+## ✅ Demo Test Scenario
 
 The demo test case (`test_twitch_wap.py`) covers:
 
@@ -148,17 +196,10 @@ The demo test case (`test_twitch_wap.py`) covers:
 3. Search by keyword "**starCraft II**"
 4. View all channel/streamer search results
 5. Scroll down twice
-6. Select the first streamer from the list
-7. Wait until the streamer page is fully loaded
-8. Handle any popups/modals automatically
+6. Select a random streamer from the list within viewport
+7. Handle any popups/modals automatically
+8. Wait until the streamer page is fully loaded
 9. Take and save a screenshot
-
----
-
-## 📌 Special Design
-
-- Extend `COMMON_MODAL_CLOSE_SELECTORS` in `utils/helpers.py` for handling new popups.
-- Use `pages/` folder to add new Page Objects for better scalability.
 
 ---
 

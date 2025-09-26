@@ -3,18 +3,11 @@ import time
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-
-from utils.helpers import close_known_modals
 
 from .base_page import BasePage
 
 
 class StreamerPage(BasePage):
-    STREAMER_NAME = (
-        By.CSS_SELECTOR,
-        "h1, h2, .tw-c-text-heading-1, .channel-header__user",
-    )
     VIDEO_PLAYER = (
         By.CSS_SELECTOR,
         "video, [data-a-player-state], iframe"
@@ -22,11 +15,15 @@ class StreamerPage(BasePage):
 
     def wait_until_loaded(self):
         try:
-            self.wait_for_element(self.STREAMER_NAME)
+            self.close_known_modals(self.driver)
         except TimeoutException:
-            try:
-                self.wait_for_element(self.VIDEO_PLAYER)
-            except TimeoutException:
-                raise AssertionError("Streamer page did not load expected elements")
-        close_known_modals(self.driver)
-        time.sleep(1)
+            pass  # if no modals, continue
+
+        try:
+            # wait for video player or embedded iframe to be visible
+            self.wait_for_element(self.VIDEO_PLAYER, condition=EC.visibility_of_element_located)
+            time.sleep(2)  # additional wait to ensure full load
+            return True
+
+        except TimeoutException:
+            return False

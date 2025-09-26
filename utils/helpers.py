@@ -1,36 +1,31 @@
+import inspect
+import os
 import time
-from datetime import datetime
 from pathlib import Path
-from selenium.webdriver.common.by import By
+
+import allure
 
 SCREENSHOT_DIR = Path("screenshots")
 SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
 
-COMMON_MODAL_CLOSE_SELECTORS = [
-    "button[aria-label='Close']",
-    "button[aria-label='Dismiss']",
-    "button[data-a-target='modal-close']",
-    ".tw-modal__close",
-    ".close",
-    "button[title='Close']",
-]
 
-def take_timestamped_screenshot(driver, name_prefix: str = "screenshot") -> Path:
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = SCREENSHOT_DIR / f"{name_prefix}_{ts}.png"
-    driver.save_screenshot(str(filename))
-    return filename
+def take_screenshot(driver, prefix="screenshot", folder="screenshots", test_name=None):
 
-def close_known_modals(driver):
-    for sel in COMMON_MODAL_CLOSE_SELECTORS:
-        elems = driver.find_elements(By.CSS_SELECTOR, sel)
-        for e in elems:
-            if e.is_displayed():
-                try:
-                    e.click()
-                except Exception:
-                    try:
-                        driver.execute_script("arguments[0].click();", e)
-                    except Exception:
-                        pass
-                time.sleep(0.5)
+    # Find the test function name if not provided
+    if not test_name:
+        stack = inspect.stack()
+        test_name = next((frame.function for frame in stack if frame.function.startswith("test_")), "unknown")
+
+    date_str = time.strftime("%Y%m%d")
+
+    # Ensure the folder exists and create a unique filename by adding an index
+    existing = [f for f in os.listdir(folder) if f.startswith(f"{prefix}_{test_name}_{date_str}")]
+    index = len(existing) + 1
+    filename = f"{prefix}_{test_name}_{date_str}_{index:03d}.png"
+    path = os.path.join(SCREENSHOT_DIR, filename)
+
+    driver.save_screenshot(path)
+
+    # Add to Allure report
+    with open(path, "rb") as f:
+        allure.attach(f.read(), name=filename, attachment_type=allure.attachment_type.PNG)

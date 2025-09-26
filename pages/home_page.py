@@ -32,8 +32,8 @@ class HomePage(BasePage):
                 el.click()
             except ElementClickInterceptedException:
                 self.driver.execute_script('arguments[0].click();', el)
-        except TimeoutException:
-            raise AssertionError('Browse icon not found on home page')
+        except TimeoutException as e:
+            raise AssertionError('Browse icon not found on home page') from e
 
     def search(self, keyword):
         self.click_browse()

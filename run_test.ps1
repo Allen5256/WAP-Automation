@@ -2,8 +2,8 @@ Param (
     [string]$target
 )
 
-$resultsDir = "allure_results"
-$reportDir = "allure_report"
+$resultsDir = "allure-results"
+$reportDir = "allure-report"
 
 # Accept parameter to specify test set
 if ([string]::IsNullOrEmpty($target)) {
@@ -18,7 +18,7 @@ else {
 $test_result = $LASTEXITCODE
 
 # Set to $false if only generate report when there are test failures
-$is_always_generate_report = $true
+$is_always_generate_report = $false
 
 if ($test_result -eq 1 -or $is_always_generate_report) {
     Write-Output "Generate Report Now..."

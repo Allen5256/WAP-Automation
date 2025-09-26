@@ -1,47 +1,64 @@
 import os
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
+
 from pages import initialize_pages
+from utils.helpers import take_screenshot
 
 MOBILE_DEVICE_NAME = "Pixel 2"
+HEADLESS = 0
 
 
-@pytest.fixture(scope="function")
-def driver():
+@pytest.fixture(name="driver", scope="function")
+def init_driver():
     chrome_options = Options()
     service = Service(ChromeDriverManager().install())
     mobile_emulation = {"deviceName": MOBILE_DEVICE_NAME}
     chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
-
-    if os.getenv("HEADLESS", "0") == "1":
+    chrome_options.add_argument("--window-size=412,915")
+    if HEADLESS:
         chrome_options.add_argument("--headless=new")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--window-size=412,915")
 
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    driver.implicitly_wait(2)
-    yield driver
-    driver.quit()
+    chrome_driver = webdriver.Chrome(service=service, options=chrome_options)
+    chrome_driver.implicitly_wait(2)
+    yield chrome_driver
+    chrome_driver.quit()
 
 
-@pytest.fixture
-def home_page(driver):
+@pytest.fixture(name="home_page")
+def init_home_page(driver: WebDriver):
     initialize_pages(driver)
     return driver.home_page
 
 
-@pytest.fixture
-def search_page(driver):
+@pytest.fixture(name="search_page")
+def search_page(driver: WebDriver):
     initialize_pages(driver)
     return driver.search_page
 
 
-@pytest.fixture
-def streamer_page(driver):
+@pytest.fixture(name="streamer_page")
+def streamer_page(driver: WebDriver):
     initialize_pages(driver)
     return driver.streamer_page
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    '''Capture screenshot on test failure and attach to Allure report'''
+
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        driver = item.funcargs.get("driver")
+        if driver:
+            take_screenshot(driver, prefix="failed", test_name=item.name)

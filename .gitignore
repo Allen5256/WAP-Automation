@@ -24,3 +24,8 @@ Thumbs.db
 
 # Webdriver-manager cache
 .wdm/
+
+# allure
+allure-results/
+allure-report/
+.allure/

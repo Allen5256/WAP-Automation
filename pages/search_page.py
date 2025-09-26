@@ -1,3 +1,5 @@
+import random
+
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -10,39 +12,31 @@ class SearchPage(BasePage):
         By.CSS_SELECTOR,
         'p[aria-label="View All Channel Search Results"]',
     )
-    STREAMER_LINKS = (
+
+    STREAMER_CARDS = (
         By.CSS_SELECTOR,
-        "a[data-a-target='preview-card-image-link'], a[href*='/videos/'], a[href*='/channel/']",
+        "button.tw-link"
     )
 
     def view_all_channels(self):
         try:
             self.click_element(
-                self.CHANNELS_VIEW_ALL,
-                condition=EC.element_to_be_clickable,
+                self.CHANNELS_VIEW_ALL
             )
-        except TimeoutException:
-            raise AssertionError("View All Channels link not found on search page")
+        except TimeoutException as e:
+            raise AssertionError("View All Channels link not found on search page") from e
 
-
-    def list_streamers(self):
+    def select_random_visible_streamer(self, only_viewport=True):
         try:
-            self.wait_for_element(
-                self.STREAMER_LINKS,
-                condition=EC.presence_of_all_elements_located,
-            )
-        except TimeoutException:
-            return []
-        elems = self.driver.find_elements(*self.STREAMER_LINKS)
-        return [e for e in elems if e.is_displayed()]
+            elems = self.wait_for_all_clickable(self.STREAMER_CARDS)
+        except TimeoutException as e:
+            raise AssertionError("No streamer links found on search results page") from e
 
-    def select_streamer_by_index(self, index=0):
-        elems = self.list_streamers()
+        if only_viewport:
+            elems = [e for e in elems if self._is_in_viewport(e)]
+
         if not elems:
-            raise AssertionError("No streamers found on search/list page")
-        target = elems[index]
-        if href := target.get_attribute("href"):
-            self.driver.get(href)
-        else:
-            # fallback using click_element
-            self.click_element((By.XPATH, f"({self.STREAMER_LINKS[1]})[{index+1}])"))
+            raise AssertionError("No streamer links are visible in viewport")
+
+        target = random.choice(elems)
+        target.click()
