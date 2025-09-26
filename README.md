@@ -6,7 +6,7 @@ This repository provides a **scalable and maintainable test automation framework
 
 #### Here is a GIF showing the test running locally:
 
-![Demo Run](./docs/demo_run.gif)
+<img src="./docs/demo_run.gif" alt="Demo run" style="width:300px;"/>
 
 ---
 
