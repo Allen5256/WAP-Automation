@@ -2,14 +2,13 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
 
 from pages import initialize_pages
 from utils.helpers import take_screenshot
 
 MOBILE_DEVICE_NAME = "Pixel 2"
-HEADLESS = 0
+HEADLESS = 1  # Set to 1 to run tests in headless mode
 
 
 @pytest.fixture(name="driver", scope="function")
