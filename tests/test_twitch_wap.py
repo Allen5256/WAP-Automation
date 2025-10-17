@@ -1,5 +1,3 @@
-import time
-
 import allure
 
 from utils.helpers import take_screenshot

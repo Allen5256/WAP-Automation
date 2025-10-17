@@ -1,5 +1,3 @@
-import os
-
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -34,19 +32,19 @@ def init_driver():
 
 
 @pytest.fixture(name="home_page")
-def init_home_page(driver: WebDriver):
+def init_home_page(driver):
     initialize_pages(driver)
     return driver.home_page
 
 
 @pytest.fixture(name="search_page")
-def search_page(driver: WebDriver):
+def init_search_page(driver):
     initialize_pages(driver)
     return driver.search_page
 
 
 @pytest.fixture(name="streamer_page")
-def streamer_page(driver: WebDriver):
+def init_streamer_page(driver):
     initialize_pages(driver)
     return driver.streamer_page
 
